@@ -195,7 +195,7 @@ export default function Projects() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6, delay: i * 0.04 }}
-              className="group relative block"
+              className="cursor-pointer group relative block"
             >
               <div
                 className={`absolute -inset-0.5 rounded-3xl bg-gradient-to-br ${p.accent} opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-60`}
@@ -265,7 +265,7 @@ export default function Projects() {
             className="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-5 py-2.5 text-sm font-medium text-white/80 transition-all duration-300 hover:scale-105 hover:border-violet-400/40 hover:text-white hover:shadow-[0_0_30px_-5px_rgba(139,92,246,0.5)]"
           >
             <Github className="h-4 w-4" />
-            View all 15 repositories on GitHub
+            View all repositories on GitHub
             <ExternalLink className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </a>
         </motion.div>
