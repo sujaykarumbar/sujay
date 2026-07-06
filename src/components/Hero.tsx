@@ -1,24 +1,12 @@
 "use client";
 
-import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
 import { useRef } from "react";
 import { TextReveal } from "@/components/ui/TextReveal";
 import { BlurText } from "@/components/ui/BlurText";
 import { GradientText } from "@/components/ui/GradientText";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { ArrowRight, Mail } from "lucide-react";
-
-const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
-    <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
-  </svg>
-);
-
-const LinkedinIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
-    <path d="M20.447 20.452h-3.554V14.84c0-1.337-.026-3.058-1.865-3.058-1.867 0-2.153 1.459-2.153 2.965v5.705H9.322V9h3.414v1.561h.049c.476-.9 1.637-1.848 3.37-1.848 3.602 0 4.267 2.372 4.267 5.455v6.284zM5.337 7.433a2.065 2.065 0 110-4.13 2.065 2.065 0 010 4.13zM6.965 20.452H3.707V9h3.258v11.452z" />
-  </svg>
-);
 
 const roles = [
   "Web Developer",
@@ -28,12 +16,7 @@ const roles = [
   "Problem Solver",
 ];
 
-const techMarquee = [
-  "TypeScript",
-  "Dart",
-  "Python",
-  "Flutter",
-  "Firebase",
+const techs = [
   "Google Cloud",
   "React",
   "Tailwind CSS",
@@ -46,6 +29,7 @@ const techMarquee = [
 export function Hero() {
   const ref = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  const shouldReduceMotion = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -58,16 +42,20 @@ export function Hero() {
   // 3D tilt on image card
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const rotateX = useSpring(useTransform(mouseY, [-200, 200], [10, -10]), {
-    stiffness: 220,
-    damping: 18,
-  });
-  const rotateY = useSpring(useTransform(mouseX, [-200, 200], [-10, 10]), {
-    stiffness: 220,
-    damping: 18,
-  });
-  const glareX = useTransform(mouseX, [-200, 200], [0, 100]);
-  const glareY = useTransform(mouseY, [-200, 200], [0, 100]);
+  const rotateX = shouldReduceMotion
+    ? 0
+    : useSpring(useTransform(mouseY, [-200, 200], [10, -10]), {
+        stiffness: 220,
+        damping: 18,
+      });
+  const rotateY = shouldReduceMotion
+    ? 0
+    : useSpring(useTransform(mouseX, [-200, 200], [-10, 10]), {
+        stiffness: 220,
+        damping: 18,
+      });
+  const glareX = shouldReduceMotion ? 50 : useTransform(mouseX, [-200, 200], [0, 100]);
+  const glareY = shouldReduceMotion ? 50 : useTransform(mouseY, [-200, 200], [0, 100]);
 
   const onCardMove = (e: React.MouseEvent) => {
     if (!cardRef.current) return;
@@ -88,7 +76,7 @@ export function Hero() {
       className="relative z-10 flex min-h-screen items-center px-6 pt-32 md:px-12 lg:px-20"
     >
       <motion.div
-        style={{ y, opacity, scale }}
+        style={shouldReduceMotion ? { y: 0, opacity: 1, scale: 1 } : { y, opacity, scale }}
         className="mx-auto grid w-full max-w-6xl gap-12 lg:grid-cols-[1.2fr_1fr] lg:items-center"
       >
         {/* Left: Text */}
@@ -179,28 +167,6 @@ export function Hero() {
             </MagneticButton>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.6, duration: 0.6 }}
-            className="mt-8 flex items-center gap-3"
-          >
-            {[
-              { icon: <GithubIcon className="h-4 w-4" />, href: "https://github.com/sujaykarumbar" },
-              { icon: <LinkedinIcon className="h-4 w-4" />, href: "https://www.linkedin.com/in/sujay-karkera-376274379/" },
-              { icon: <Mail className="h-4 w-4" />, href: "mailto:sujaykarkera5@gmail.com" },
-            ].map((s, i) => (
-              <a
-                key={i}
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white/60 transition-all duration-300 hover:scale-110 hover:border-violet-400/40 hover:text-white hover:shadow-[0_0_20px_-5px_rgba(139,92,246,0.6)]"
-              >
-                {s.icon}
-              </a>
-            ))}
-          </motion.div>
         </div>
 
         {/* Right: Portrait card with 3D tilt */}
@@ -217,9 +183,9 @@ export function Hero() {
 
           <motion.div
             ref={cardRef}
-            onMouseMove={onCardMove}
-            onMouseLeave={onCardLeave}
-            style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+            onMouseMove={shouldReduceMotion ? undefined : onCardMove}
+            onMouseLeave={shouldReduceMotion ? undefined : onCardLeave}
+            style={{ rotateX: shouldReduceMotion ? 0 : rotateX, rotateY: shouldReduceMotion ? 0 : rotateY, transformStyle: "preserve-3d" }}
             className="glass-strong relative overflow-hidden rounded-[2rem] p-2"
           >
             <div
@@ -239,7 +205,7 @@ export function Hero() {
               <motion.div
                 className="pointer-events-none absolute inset-0 rounded-[1.6rem] opacity-40"
                 style={{
-                  background: `radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255,255,255,0.25), transparent 40%)`,
+                  background: `radial-gradient(circle at ${shouldReduceMotion ? 50 : glareX}% ${shouldReduceMotion ? 50 : glareY}%, rgba(255,255,255,0.25), transparent 40%)`,
                 }}
               />
 
@@ -263,7 +229,7 @@ export function Hero() {
       {/* Bottom tech marquee */}
       <div className="absolute bottom-12 left-0 right-0 overflow-hidden">
         <div className="flex w-max animate-marquee items-center gap-12 px-6">
-          {[...techMarquee, ...techMarquee, ...techMarquee].map((t, i) => (
+          {[...techs, ...techs, ...techs].map((t, i) => (
             <span
               key={i}
               className="flex items-center gap-12 whitespace-nowrap font-display text-2xl font-bold text-white/15"

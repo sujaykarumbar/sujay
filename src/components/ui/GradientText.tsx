@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, type HTMLMotionProps } from "framer-motion";
+import { motion, type HTMLMotionProps, useReducedMotion } from "framer-motion";
 import { cn } from "@/utils/cn";
 import type { ReactNode } from "react";
 
@@ -22,6 +22,8 @@ export function GradientText({
   animated = false,
   ...props
 }: GradientTextProps) {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
     <motion.span
       className={cn("inline-block", className)}
@@ -33,7 +35,7 @@ export function GradientText({
         WebkitTextFillColor: "transparent",
         color: "transparent",
       }}
-      {...(animated
+      {...(animated && !shouldReduceMotion
         ? {
             animate: {
               backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],

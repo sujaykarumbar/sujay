@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
 import { useRef, type ReactNode, type MouseEvent } from "react";
 import { cn } from "@/utils/cn";
 
@@ -22,6 +22,7 @@ export function MagneticButton({
   rel,
 }: MagneticButtonProps) {
   const ref = useRef<HTMLAnchorElement | HTMLButtonElement>(null);
+  const shouldReduceMotion = useReducedMotion();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const springX = useSpring(x, { stiffness: 220, damping: 18, mass: 0.4 });
@@ -41,7 +42,28 @@ export function MagneticButton({
     y.set(0);
   };
 
-  const inner = (
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!href) return;
+
+    if (href.startsWith("#")) {
+      e.preventDefault();
+      const id = href.slice(1);
+      const targetEl = document.getElementById(id);
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: "smooth" });
+        return;
+      }
+    }
+
+    if (target === "_blank") {
+      e.preventDefault();
+      window.open(href, "_blank", rel ? rel : "noopener noreferrer");
+    }
+  };
+
+  const inner = shouldReduceMotion ? (
+    <span className="relative inline-flex items-center gap-2">{children}</span>
+  ) : (
     <motion.span
       style={{ x: springX, y: springY, rotateX, rotateY, transformPerspective: 800 }}
       className="relative inline-flex items-center gap-2"
@@ -51,21 +73,55 @@ export function MagneticButton({
   );
 
   if (href) {
+    if (shouldReduceMotion) {
+      return (
+        <a
+          ref={ref as React.RefObject<HTMLAnchorElement>}
+          href={href}
+          target={target}
+          rel={rel}
+          onClick={handleLinkClick}
+          className={cn(
+            "group relative inline-flex items-center justify-center overflow-hidden rounded-full px-6 py-3 text-sm font-medium transition-all duration-300 cursor-pointer",
+            className
+          )}
+        >
+          {inner}
+        </a>
+      );
+    }
+
     return (
       <motion.a
         ref={ref as React.RefObject<HTMLAnchorElement>}
         href={href}
         target={target}
         rel={rel}
+        onClick={handleLinkClick}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         className={cn(
-          "group relative inline-flex items-center justify-center overflow-hidden rounded-full px-6 py-3 text-sm font-medium transition-all duration-300",
+          "group relative inline-flex items-center justify-center overflow-hidden rounded-full px-6 py-3 text-sm font-medium transition-all duration-300 cursor-pointer",
           className
         )}
       >
         {inner}
       </motion.a>
+    );
+  }
+
+  if (shouldReduceMotion) {
+    return (
+      <button
+        ref={ref as React.RefObject<HTMLButtonElement>}
+        onClick={onClick}
+        className={cn(
+          "group relative inline-flex items-center justify-center overflow-hidden rounded-full px-6 py-3 text-sm font-medium transition-all duration-300 cursor-pointer",
+          className
+        )}
+      >
+        {inner}
+      </button>
     );
   }
 
@@ -76,7 +132,7 @@ export function MagneticButton({
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className={cn(
-        "group relative inline-flex items-center justify-center overflow-hidden rounded-full px-6 py-3 text-sm font-medium transition-all duration-300",
+        "group relative inline-flex items-center justify-center overflow-hidden rounded-full px-6 py-3 text-sm font-medium transition-all duration-300 cursor-pointer",
         className
       )}
     >

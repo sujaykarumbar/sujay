@@ -24,7 +24,7 @@ const LinkedinIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-const socials = [
+export const socials = [
   {
     label: "Email",
     value: "sujaykarkera5@gmail.com",
@@ -107,7 +107,7 @@ export default function Contact() {
             </div>
             <a
               href="mailto:sujaykarkera5@gmail.com"
-              className="group/btn flex items-center justify-between gap-3 rounded-2xl bg-white px-5 py-4 text-base font-semibold text-black transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_-5px_rgba(255,255,255,0.5)]"
+              className="cursor-pointer group/btn flex items-center justify-between gap-3 rounded-2xl bg-white px-5 py-4 text-base font-semibold text-black transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_-5px_rgba(255,255,255,0.5)]"
             >
               <span className="flex items-center gap-3">
                 <Mail className="h-5 w-5" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/utils/cn";
 
 interface BlurTextProps {
@@ -19,6 +19,15 @@ export function BlurText({
   once = true,
 }: BlurTextProps) {
   const letters = Array.from(text);
+  const shouldReduceMotion = useReducedMotion();
+
+  if (shouldReduceMotion) {
+    return (
+      <span className={cn("inline-block", className)} aria-label={text}>
+        {text}
+      </span>
+    );
+  }
 
   return (
     <motion.span

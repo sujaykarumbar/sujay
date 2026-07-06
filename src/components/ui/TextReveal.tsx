@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, type Variants } from "framer-motion";
+import { motion, type Variants, useReducedMotion } from "framer-motion";
 import { cn } from "@/utils/cn";
 
 interface TextRevealProps {
@@ -19,6 +19,15 @@ export function TextReveal({
   once = true,
 }: TextRevealProps) {
   const words = text.split(" ");
+  const shouldReduceMotion = useReducedMotion();
+
+  if (shouldReduceMotion) {
+    return (
+      <span className={cn("inline-block", className)} aria-label={text}>
+        {text}
+      </span>
+    );
+  }
 
   const container: Variants = {
     hidden: {},
