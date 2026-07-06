@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
 import { useRef } from "react";
 import { TextReveal } from "@/components/ui/TextReveal";
+import { useMobileOptimization } from "@/hooks/use-mobile-optimization";
 import { BlurText } from "@/components/ui/BlurText";
 import { GradientText } from "@/components/ui/GradientText";
 import { MagneticButton } from "@/components/ui/MagneticButton";
@@ -30,6 +31,7 @@ export function Hero() {
   const ref = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
+  const simplifyForMobile = useMobileOptimization();
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -42,20 +44,20 @@ export function Hero() {
   // 3D tilt on image card
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const rotateX = shouldReduceMotion
+  const rotateX = shouldReduceMotion || simplifyForMobile
     ? 0
     : useSpring(useTransform(mouseY, [-200, 200], [10, -10]), {
         stiffness: 220,
         damping: 18,
       });
-  const rotateY = shouldReduceMotion
+  const rotateY = shouldReduceMotion || simplifyForMobile
     ? 0
     : useSpring(useTransform(mouseX, [-200, 200], [-10, 10]), {
         stiffness: 220,
         damping: 18,
       });
-  const glareX = shouldReduceMotion ? 50 : useTransform(mouseX, [-200, 200], [0, 100]);
-  const glareY = shouldReduceMotion ? 50 : useTransform(mouseY, [-200, 200], [0, 100]);
+  const glareX = shouldReduceMotion || simplifyForMobile ? 50 : useTransform(mouseX, [-200, 200], [0, 100]);
+  const glareY = shouldReduceMotion || simplifyForMobile ? 50 : useTransform(mouseY, [-200, 200], [0, 100]);
 
   const onCardMove = (e: React.MouseEvent) => {
     if (!cardRef.current) return;
@@ -76,7 +78,7 @@ export function Hero() {
       className="relative z-10 flex min-h-screen items-center px-6 pt-32 md:px-12 lg:px-20"
     >
       <motion.div
-        style={shouldReduceMotion ? { y: 0, opacity: 1, scale: 1 } : { y, opacity, scale }}
+        style={shouldReduceMotion || simplifyForMobile ? { y: 0, opacity: 1, scale: 1 } : { y, opacity, scale }}
         className="mx-auto grid w-full max-w-6xl gap-12 lg:grid-cols-[1.2fr_1fr] lg:items-center"
       >
         {/* Left: Text */}
@@ -183,9 +185,9 @@ export function Hero() {
 
           <motion.div
             ref={cardRef}
-            onMouseMove={shouldReduceMotion ? undefined : onCardMove}
-            onMouseLeave={shouldReduceMotion ? undefined : onCardLeave}
-            style={{ rotateX: shouldReduceMotion ? 0 : rotateX, rotateY: shouldReduceMotion ? 0 : rotateY, transformStyle: "preserve-3d" }}
+            onMouseMove={shouldReduceMotion || simplifyForMobile ? undefined : onCardMove}
+            onMouseLeave={shouldReduceMotion || simplifyForMobile ? undefined : onCardLeave}
+            style={{ rotateX: shouldReduceMotion || simplifyForMobile ? 0 : rotateX, rotateY: shouldReduceMotion || simplifyForMobile ? 0 : rotateY, transformStyle: "preserve-3d" }}
             className="glass-strong relative overflow-hidden rounded-[2rem] p-2"
           >
             <div
@@ -205,7 +207,7 @@ export function Hero() {
               <motion.div
                 className="pointer-events-none absolute inset-0 rounded-[1.6rem] opacity-40"
                 style={{
-                  background: `radial-gradient(circle at ${shouldReduceMotion ? 50 : glareX}% ${shouldReduceMotion ? 50 : glareY}%, rgba(255,255,255,0.25), transparent 40%)`,
+                  background: `radial-gradient(circle at ${shouldReduceMotion || simplifyForMobile ? 50 : glareX}% ${shouldReduceMotion || simplifyForMobile ? 50 : glareY}%, rgba(255,255,255,0.25), transparent 40%)`,
                 }}
               />
 
