@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
+import { useMobileOptimization } from "@/hooks/use-mobile-optimization";
 import { useRef, type ReactNode, type MouseEvent } from "react";
 import { cn } from "@/utils/cn";
 
@@ -23,6 +24,7 @@ export function MagneticButton({
 }: MagneticButtonProps) {
   const ref = useRef<HTMLAnchorElement | HTMLButtonElement>(null);
   const shouldReduceMotion = useReducedMotion();
+  const simplifyForMobile = useMobileOptimization();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const springX = useSpring(x, { stiffness: 220, damping: 18, mass: 0.4 });
@@ -61,7 +63,7 @@ export function MagneticButton({
     }
   };
 
-  const inner = shouldReduceMotion ? (
+  const inner = shouldReduceMotion || simplifyForMobile ? (
     <span className="relative inline-flex items-center gap-2">{children}</span>
   ) : (
     <motion.span
@@ -73,7 +75,7 @@ export function MagneticButton({
   );
 
   if (href) {
-    if (shouldReduceMotion) {
+    if (shouldReduceMotion || simplifyForMobile) {
       return (
         <a
           ref={ref as React.RefObject<HTMLAnchorElement>}

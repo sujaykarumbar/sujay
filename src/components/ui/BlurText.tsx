@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { useMobileOptimization } from "@/hooks/use-mobile-optimization";
 import { cn } from "@/utils/cn";
 
 interface BlurTextProps {
@@ -20,8 +21,9 @@ export function BlurText({
 }: BlurTextProps) {
   const letters = Array.from(text);
   const shouldReduceMotion = useReducedMotion();
+  const simplifyForMobile = useMobileOptimization();
 
-  if (shouldReduceMotion) {
+  if (shouldReduceMotion || simplifyForMobile) {
     return (
       <span className={cn("inline-block", className)} aria-label={text}>
         {text}

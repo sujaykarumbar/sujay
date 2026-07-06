@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, type HTMLMotionProps, useReducedMotion } from "framer-motion";
+import { useMobileOptimization } from "@/hooks/use-mobile-optimization";
 import { cn } from "@/utils/cn";
 import type { ReactNode } from "react";
 
@@ -23,6 +24,7 @@ export function GradientText({
   ...props
 }: GradientTextProps) {
   const shouldReduceMotion = useReducedMotion();
+  const simplifyForMobile = useMobileOptimization();
 
   return (
     <motion.span
@@ -35,7 +37,7 @@ export function GradientText({
         WebkitTextFillColor: "transparent",
         color: "transparent",
       }}
-      {...(animated && !shouldReduceMotion
+      {...(animated && !shouldReduceMotion && !simplifyForMobile
         ? {
             animate: {
               backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],

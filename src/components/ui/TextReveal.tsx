@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, type Variants, useReducedMotion } from "framer-motion";
+import { useMobileOptimization } from "@/hooks/use-mobile-optimization";
 import { cn } from "@/utils/cn";
 
 interface TextRevealProps {
@@ -20,8 +21,9 @@ export function TextReveal({
 }: TextRevealProps) {
   const words = text.split(" ");
   const shouldReduceMotion = useReducedMotion();
+  const simplifyForMobile = useMobileOptimization();
 
-  if (shouldReduceMotion) {
+  if (shouldReduceMotion || simplifyForMobile) {
     return (
       <span className={cn("inline-block", className)} aria-label={text}>
         {text}

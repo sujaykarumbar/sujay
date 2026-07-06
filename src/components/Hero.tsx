@@ -32,6 +32,7 @@ export function Hero() {
   const cardRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
   const simplifyForMobile = useMobileOptimization();
+  const shouldSimplify = shouldReduceMotion || simplifyForMobile;
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -44,20 +45,20 @@ export function Hero() {
   // 3D tilt on image card
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const rotateX = shouldReduceMotion || simplifyForMobile
+  const rotateX = shouldSimplify
     ? 0
     : useSpring(useTransform(mouseY, [-200, 200], [10, -10]), {
         stiffness: 220,
         damping: 18,
       });
-  const rotateY = shouldReduceMotion || simplifyForMobile
+  const rotateY = shouldSimplify
     ? 0
     : useSpring(useTransform(mouseX, [-200, 200], [-10, 10]), {
         stiffness: 220,
         damping: 18,
       });
-  const glareX = shouldReduceMotion || simplifyForMobile ? 50 : useTransform(mouseX, [-200, 200], [0, 100]);
-  const glareY = shouldReduceMotion || simplifyForMobile ? 50 : useTransform(mouseY, [-200, 200], [0, 100]);
+  const glareX = shouldSimplify ? 50 : useTransform(mouseX, [-200, 200], [0, 100]);
+  const glareY = shouldSimplify ? 50 : useTransform(mouseY, [-200, 200], [0, 100]);
 
   const onCardMove = (e: React.MouseEvent) => {
     if (!cardRef.current) return;
@@ -78,15 +79,15 @@ export function Hero() {
       className="relative z-10 flex min-h-screen items-center px-6 pt-32 md:px-12 lg:px-20"
     >
       <motion.div
-        style={shouldReduceMotion || simplifyForMobile ? { y: 0, opacity: 1, scale: 1 } : { y, opacity, scale }}
+        style={shouldSimplify ? { y: 0, opacity: 1, scale: 1 } : { y, opacity, scale }}
         className="mx-auto grid w-full max-w-6xl gap-12 lg:grid-cols-[1.2fr_1fr] lg:items-center"
       >
         {/* Left: Text */}
         <div>
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={shouldSimplify ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            transition={shouldSimplify ? { duration: 0 } : { duration: 0.6, delay: 0.1 }}
             className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/[0.08] px-3 py-1.5 text-xs text-emerald-300"
           >
             <span className="relative flex h-2 w-2">
@@ -107,9 +108,9 @@ export function Hero() {
           </h1>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={shouldSimplify ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 1 }}
+            transition={shouldSimplify ? { duration: 0 } : { duration: 0.7, delay: 1 }}
             className="mt-8 max-w-xl"
           >
             <p className="text-pretty text-base leading-relaxed text-white/65 md:text-lg">
@@ -121,9 +122,9 @@ export function Hero() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0 }}
+            initial={shouldSimplify ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.2, duration: 0.6 }}
+            transition={shouldSimplify ? { duration: 0 } : { delay: 1.2, duration: 0.6 }}
             className="mt-6 flex flex-wrap items-center gap-2 text-sm"
           >
             <span className="text-white/40">I build as a</span>
@@ -148,9 +149,9 @@ export function Hero() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={shouldSimplify ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.4 }}
+            transition={shouldSimplify ? { duration: 0 } : { duration: 0.6, delay: 1.4 }}
             className="mt-10 flex flex-wrap items-center gap-4"
           >
             <MagneticButton
@@ -173,9 +174,9 @@ export function Hero() {
 
         {/* Right: Portrait card with 3D tilt */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.9, x: 40 }}
+          initial={shouldSimplify ? false : { opacity: 0, scale: 0.9, x: 40 }}
           animate={{ opacity: 1, scale: 1, x: 0 }}
-          transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          transition={shouldSimplify ? { duration: 0 } : { duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
           className="relative mx-auto w-full max-w-md"
           style={{ perspective: 1000 }}
         >
@@ -185,9 +186,9 @@ export function Hero() {
 
           <motion.div
             ref={cardRef}
-            onMouseMove={shouldReduceMotion || simplifyForMobile ? undefined : onCardMove}
-            onMouseLeave={shouldReduceMotion || simplifyForMobile ? undefined : onCardLeave}
-            style={{ rotateX: shouldReduceMotion || simplifyForMobile ? 0 : rotateX, rotateY: shouldReduceMotion || simplifyForMobile ? 0 : rotateY, transformStyle: "preserve-3d" }}
+            onMouseMove={shouldSimplify ? undefined : onCardMove}
+            onMouseLeave={shouldSimplify ? undefined : onCardLeave}
+            style={{ rotateX: shouldSimplify ? 0 : rotateX, rotateY: shouldSimplify ? 0 : rotateY, transformStyle: "preserve-3d" }}
             className="glass-strong relative overflow-hidden rounded-[2rem] p-2"
           >
             <div
@@ -207,14 +208,14 @@ export function Hero() {
               <motion.div
                 className="pointer-events-none absolute inset-0 rounded-[1.6rem] opacity-40"
                 style={{
-                  background: `radial-gradient(circle at ${shouldReduceMotion || simplifyForMobile ? 50 : glareX}% ${shouldReduceMotion || simplifyForMobile ? 50 : glareY}%, rgba(255,255,255,0.25), transparent 40%)`,
+                  background: `radial-gradient(circle at ${shouldSimplify ? 50 : glareX}% ${shouldSimplify ? 50 : glareY}%, rgba(255,255,255,0.25), transparent 40%)`,
                 }}
               />
 
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={shouldSimplify ? false : { opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.1, duration: 0.6 }}
+                transition={shouldSimplify ? { duration: 0 } : { delay: 1.1, duration: 0.6 }}
                 className="absolute bottom-4 left-4 right-4 flex items-center justify-center gap-3 rounded-2xl border border-white/15 bg-white/[0.08] py-3 backdrop-blur-xl"
                 style={{ transform: "translateZ(40px)" }}
               >
@@ -230,7 +231,7 @@ export function Hero() {
 
       {/* Bottom tech marquee */}
       <div className="absolute bottom-12 left-0 right-0 overflow-hidden">
-        <div className="flex w-max animate-marquee items-center gap-12 px-6">
+        <div className="flex w-max items-center gap-12 px-6 md:animate-marquee">
           {[...techs, ...techs, ...techs].map((t, i) => (
             <span
               key={i}
@@ -244,16 +245,16 @@ export function Hero() {
       </div>
 
       <motion.div
-        initial={{ opacity: 0 }}
+        initial={shouldSimplify ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.8, duration: 0.6 }}
+        transition={shouldSimplify ? { duration: 0 } : { delay: 1.8, duration: 0.6 }}
         className="absolute bottom-2 left-1/2 -translate-x-1/2"
       >
         <div className="flex flex-col items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-white/30">
           <span>Scroll</span>
           <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+            animate={shouldSimplify ? undefined : { y: [0, 8, 0] }}
+            transition={shouldSimplify ? { duration: 0 } : { duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
             className="h-8 w-px bg-gradient-to-b from-white/40 to-transparent"
           />
         </div>
